@@ -1,4 +1,4 @@
-# Nodejs CRUD using PostgresQL 
+# Nodejs CRUD using PostgreSQL 
 Nodejs CRUD API which is very neat and clean easy to understand architechture of app with PostgresQL database.
 
 # Prerequisites
