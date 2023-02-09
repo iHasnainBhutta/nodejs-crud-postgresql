@@ -4,6 +4,8 @@ const {
   updateRecord,
   viewRecords,
   deleteRecord,
+  deleteMultipleRows,
+  insertMultiRecords,
 } = require("../models/post");
 
 const createUsersTable = async (req, res) => {
@@ -19,8 +21,9 @@ const insertUserRecord = async (req, res) => {
   try {
     const data = req.body;
     const result = await insertRecord(data);
-
-    res.status(200).json({ message: "Data inserted successfully", result });
+    result
+      ? res.status(200).json({ message: "Data inserted successfully", result })
+      : res.status(500).json({ message: "Failed to insert data" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to insert data" });
@@ -59,10 +62,38 @@ const deleteRec = async (req, res) => {
   } catch (error) {}
 };
 
+const deleteMultiRows = async (req, res) => {
+  try {
+    const ids = req.body;
+    const result = deleteMultipleRows(ids);
+    result
+      ? res.status(200).json({ message: "Selected Records deleted" })
+      : res.status(500).json({ message: "Records not found" });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const insertMultiRec = async (req, res) => {
+  try {
+    const data = req.body;
+    console.log(data);
+    const result = await insertMultiRecords(data);
+    result
+      ? res.status(200).json({ message: "Data inserted successfully", result })
+      : res.status(500).json({ message: "Failed to insert data" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to insert data" });
+  }
+};
+
 module.exports = {
   createUsersTable,
   insertUserRecord,
   updateUserRecord,
   viewAllRecords,
   deleteRec,
+  deleteMultiRows,
+  insertMultiRec,
 };

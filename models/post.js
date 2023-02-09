@@ -19,12 +19,10 @@ const insertRecord = async (data) => {
       "INSERT INTO customers (user_id, name, age, phone) VALUES ($1, $2, $3, $4) RETURNING *";
     const values = [user_id, name, age, phone];
     const res = await DBConnect().query(query_, values);
-    console.log("Customer record inserted successfully", res);
-    return res;
+    // console.log("Customer record inserted successfully", res);
+    return res ? true : false;
   } catch (error) {
     console.error(error.message);
-  } finally {
-    await client.end();
   }
 };
 
@@ -49,7 +47,6 @@ const updateRecord = async (id, name) => {
 };
 
 // View all records
-
 const viewRecords = async () => {
   try {
     const query = "SELECT * FROM customers";
@@ -62,7 +59,7 @@ const viewRecords = async () => {
   }
 };
 
-//delete records
+//delete single record
 const deleteRecord = async (id) => {
   try {
     const query_ = `DELETE FROM customers WHERE user_id = ${id}`;
@@ -73,10 +70,40 @@ const deleteRecord = async (id) => {
   }
 };
 
+//delete multiple rows
+const deleteMultipleRows = async (ids) => {
+  try {
+    const { userIds } = ids;
+    const delQuery = `DELETE FROM customers WHERE user_id = ANY($1)`;
+    const result = DBConnect().query(delQuery, [userIds]);
+    result ? true : false;
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+// insert multi rows/records
+const insertMultiRecords = async (data) => {
+  try {
+    const { params } = data;
+    const result = params.map((params) => {
+      const query_ =
+        "INSERT INTO customers (user_id, name, age, phone) VALUES ($1, $2, $3, $4) RETURNING *";
+      const values = [params.user_id, params.name, params.age, params.phone];
+
+      const res = DBConnect().query(query_, values);
+      return res;
+    });
+    return result ? true : false;
+  } catch (error) {}
+};
+
 module.exports = {
   createTable,
   insertRecord,
   updateRecord,
   viewRecords,
   deleteRecord,
+  deleteMultipleRows,
+  insertMultiRecords,
 };
