@@ -3,7 +3,8 @@ const DBConnect = require("../config/dbConnection");
 // create table (create)
 const createTable = async () => {
   try {
-    const quers = `CREATE TABLE IF NOT EXISTS customers (user_id numeric(10,0) NOT NULL,name character varying(50) COLLATE pg_catalog."default" NOT NULL,age numeric(3,0) NOT NULL,phone character varying(20) COLLATE pg_catalog."default",CONSTRAINT customers_pkey PRIMARY KEY (user_id));`;
+    // const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, name text COLLATE pg_catalog."default" NOT NULL, email text COLLATE pg_catalog."default" NOT NULL, phone text COLLATE pg_catalog."default" NOT NULL, password text COLLATE pg_catalog."default" NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
+    const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, email text COLLATE pg_catalog."default" NOT NULL, password text NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
     // console.log(DBConnect());
     const table = await DBConnect().query(quers);
     console.log("Table created successfully", table);

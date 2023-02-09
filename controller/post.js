@@ -7,14 +7,15 @@ const {
   deleteMultipleRows,
   insertMultiRecords,
 } = require("../models/post");
+const { register, login } = require("../models/auth");
 
 const createUsersTable = async (req, res) => {
   try {
     await createTable();
-    res.status(200).json({ message: "Users table created successfully" });
+    res.status(200).json({ message: "table created successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to create users table" });
+    res.status(500).json({ message: "Failed to create table" });
   }
 };
 const insertUserRecord = async (req, res) => {
@@ -88,6 +89,29 @@ const insertMultiRec = async (req, res) => {
   }
 };
 
+const userRegister = async (req, res) => {
+  try {
+    const data = req.body;
+    console.log(">>>>", data);
+    const result = await register(data);
+    console.log(">>>>>>>>>>>>>>>>>>", result);
+    result
+      ? res.status(200).json({ message: "Registration successfully", result })
+      : res.status(500).json({ message: "Failed to register" });
+  } catch (err) {}
+};
+
+const userLogin = async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await login(data, res);
+    console.log("controller>>", result);
+    result
+      ? res.status(200).json({ message: "User logged in successfully", result })
+      : res.status(500).json({ message: "Enter Correct Passoword" });
+  } catch (err) {}
+};
+
 module.exports = {
   createUsersTable,
   insertUserRecord,
@@ -96,4 +120,6 @@ module.exports = {
   deleteRec,
   deleteMultiRows,
   insertMultiRec,
+  userRegister,
+  userLogin,
 };
