@@ -11,5 +11,6 @@ router.delete("/delete-multi-records", postController.deleteMultiRows);
 router.post("/insert-multi-records", postController.insertMultiRec);
 router.post("/user-register", postController.userRegister);
 router.get("/user-login", postController.userLogin);
+router.get("/verify/:id/:token", postController.emailVerify);
 
 module.exports = router;

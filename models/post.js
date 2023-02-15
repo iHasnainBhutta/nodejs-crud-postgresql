@@ -4,7 +4,7 @@ const DBConnect = require("../config/dbConnection");
 const createTable = async () => {
   try {
     // const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, name text COLLATE pg_catalog."default" NOT NULL, email text COLLATE pg_catalog."default" NOT NULL, phone text COLLATE pg_catalog."default" NOT NULL, password text COLLATE pg_catalog."default" NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
-    const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, email text COLLATE pg_catalog."default" NOT NULL, password text NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
+    const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, email text COLLATE pg_catalog."default" NOT NULL, password text NOT NULL, token text, verified BOOLEAN DEFAULT false, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
     // console.log(DBConnect());
     const table = await DBConnect().query(quers);
     console.log("Table created successfully", table);
@@ -99,6 +99,18 @@ const insertMultiRecords = async (data) => {
   } catch (error) {}
 };
 
+const viewSpecificRec = async (id) => {
+  try {
+    const result = `SELECT * FROM users WHERE user_id = '${id}'`;
+    const query_ = await DBConnect().query(result);
+    const userData = query_.rows[0];
+    // console.log(">>>>>>>>>>>>>>>>", id_);
+    return userData;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 module.exports = {
   createTable,
   insertRecord,
@@ -107,4 +119,5 @@ module.exports = {
   deleteRecord,
   deleteMultipleRows,
   insertMultiRecords,
+  viewSpecificRec,
 };

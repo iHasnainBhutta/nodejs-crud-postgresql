@@ -6,8 +6,11 @@ const {
   deleteRecord,
   deleteMultipleRows,
   insertMultiRecords,
+  viewSpecificRec,
 } = require("../models/post");
 const { register, login } = require("../models/auth");
+const DBConnect = require("../config/dbConnection");
+const { sendEmail } = require("../helperFunctions/email");
 
 const createUsersTable = async (req, res) => {
   try {
@@ -93,8 +96,8 @@ const userRegister = async (req, res) => {
   try {
     const data = req.body;
     console.log(">>>>", data);
-    const result = await register(data);
-    console.log(">>>>>>>>>>>>>>>>>>", result);
+    const result = await register(data, res);
+    // console.log(">>>>>>>>>>>>>>>>>>", verifyEmail);
     result
       ? res.status(200).json({ message: "Registration successfully", result })
       : res.status(500).json({ message: "Failed to register" });
@@ -104,12 +107,56 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const data = req.body;
+    const { email } = req.body;
     const result = await login(data, res);
-    console.log("controller>>", result);
-    result
-      ? res.status(200).json({ message: "User logged in successfully", result })
-      : res.status(500).json({ message: "Enter Correct Passoword" });
+    const { token, verified, id } = result;
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!", result);
+    if (!verified && token) {
+      const message = `${process.env.BASE_URL}user/verify/${id}/${token}`;
+      await sendEmail(email, "Verify Email", message);
+
+      res.send("An Email sent to your account please verify");
+      console.log("After everything", temp);
+    } else {
+      if (token && verified) {
+        res
+          .status(200)
+          .json({ message: "User logged in successfully", result });
+      } else {
+        res.status(500).json({ message: "Enter Correct Passoword" });
+      }
+    }
   } catch (err) {}
+};
+
+const emailVerify = async (req, res) => {
+  try {
+    const { id, token } = req.params;
+    const user = await viewSpecificRec(id);
+    const DBtoken_ = user.token;
+    // console.log("verify :", EMtoken);
+    // if (!user) return res.status(400).send("Invalid link");
+
+    if (DBtoken_ == token) {
+      const query_ = `UPDATE users SET verified = true WHERE user_id = '${id}'`;
+      const result = await DBConnect().query(query_);
+      console.log(">>", result)
+      await res.status(200).json({ message: "email verified sucessfully" });
+      // console.log("OKk");
+    } else {
+      return res.status(400).send("Invalid link");
+    }
+    // const token = await Token.findOne({
+    //   userId: user._id,
+    //   token: req.params.token,
+    // });
+    // if (!token) return res.status(400).send("Invalid link");
+    // await User.updateOne({ _id: user._id, verified: true });
+    // await Token.findByIdAndRemove(token._id);
+    // res.send("email verified sucessfully");
+  } catch (error) {
+    res.status(400).send("An error occured");
+  }
 };
 
 module.exports = {
@@ -122,4 +169,5 @@ module.exports = {
   insertMultiRec,
   userRegister,
   userLogin,
+  emailVerify,
 };
