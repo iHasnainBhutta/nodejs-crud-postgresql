@@ -15,34 +15,35 @@ const register = async (data, res) => {
     );
     // console.log(">verifying", result);
     const arr = result.rows;
-    console.log(arr.length != 0);
     if (arr.length != 0) {
+      console.log("if body");
       return res.status(500).json({ message: "Email already exist!" });
     } else {
+      console.log("else body");
       bcrypt.hash(password, 15, (err, hash) => {
         if (err) {
+          console.log("bcrypt if body");
           // console.log("if in else  ", err);
           return "Server Error";
         }
+        console.log("After bcrypt body");
         const user = {
           email,
           password: hash,
           token,
         };
-        var flag = 1;
-        const res = client().query(
+        // var flag = false;
+        const result = client().query(
           `INSERT INTO users (email, password, token) VALUES ($1, $2, $3);`,
-          [user.email, user.password, user.token],
-          (err) => {
-            if (err) {
-              console.log(err);
-            } else {
-              return true;
-            }
-          }
+          [user.email, user.password, user.token]
         );
-        console.log(res);
-        return res ? true : false;
+        if (result) {
+          res
+            .status(200)
+            .json({ message: "Registration successfully", result });
+        } else {
+          res.status(500).json({ message: "Failed to register" });
+        }
       });
     }
   } catch (error) {
@@ -82,7 +83,7 @@ const login = async (data, res) => {
             expiresIn: "1H",
           }
         );
-        console.log("token in jWT", token)
+        console.log("token in jWT", token);
         // const id = await viewSpecificRec(email);
         // console.log(id)
         // const { user_id, verified } = id;

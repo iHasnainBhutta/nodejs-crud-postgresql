@@ -16,7 +16,9 @@ const sendEmail = async (email, subject, text) => {
       from: process.env.USER,
       to: email,
       subject: subject,
-      text: text,
+      text: text.URL ? text.URL : text,
+      // html: `<h4>If you want to reset your password then please <a href="${text}">Click here</a> </h4>`,
+      html: `${text.msg} <a href="${text.URL}">Click here</a> </h4>`,
     });
     console.log("Email sent successfully");
   } catch (err) {
