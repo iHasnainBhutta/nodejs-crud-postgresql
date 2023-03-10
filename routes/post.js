@@ -1,11 +1,16 @@
 const express = require("express");
 const postController = require("../controller/post");
-
+const { upload } = require("../helperFunctions/fileUpload");
 const router = express.Router();
+
 router.post("/create-table", postController.createUsersTable);
 router.post("/create-product-tables", postController.createProductTable);
 router.post("/insert-record", postController.insertUserRecord);
-router.post("/insert-product", postController.insertNewProduct);
+router.post(
+  "/insert-product",
+  upload.single("image_url"),
+  postController.insertNewProduct
+);
 router.put("/update-record/:id", postController.updateUserRecord);
 router.get("/view-records", postController.viewAllRecords);
 router.get("/view-product", postController.viewAllProduct);

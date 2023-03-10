@@ -17,6 +17,7 @@ const {
 const { register, login } = require("../models/auth");
 const DBConnect = require("../config/dbConnection");
 const { sendEmail } = require("../helperFunctions/email");
+const { FileHandler } = require("../helperFunctions/fileUpload");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -52,8 +53,10 @@ const insertUserRecord = async (req, res) => {
 };
 const insertNewProduct = async (req, res) => {
   try {
+    // console.log(">>>>>>> file", req.file);
+    const { originalname } = req.file;
     const data = req.body;
-    const result = await insertProduct(data);
+    const result = await insertProduct(data, originalname);
     result
       ? res
           .status(200)
@@ -328,6 +331,10 @@ const updatePass = async (req, res) => {
   }
 };
 
+const uploadFile = async (req, res) => {
+  res.status(200).json({ message: "Image Uploaded" });
+};
+
 module.exports = {
   createUsersTable,
   insertUserRecord,
@@ -346,4 +353,5 @@ module.exports = {
   insertNewProduct,
   viewAllProduct,
   deleteProductByID,
+  uploadFile,
 };

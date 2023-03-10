@@ -15,7 +15,7 @@ const createTable = async () => {
 const createTableForProduct = async () => {
   try {
     // const quers = `CREATE TABLE IF NOT EXISTS users (user_id SERIAL, name text COLLATE pg_catalog."default" NOT NULL, email text COLLATE pg_catalog."default" NOT NULL, phone text COLLATE pg_catalog."default" NOT NULL, password text COLLATE pg_catalog."default" NOT NULL, CONSTRAINT users_pkey PRIMARY KEY (user_id));`;
-    const quers = `CREATE TABLE IF NOT EXISTS products (p_id SERIAL, product_name text COLLATE pg_catalog."default" NOT NULL, product_description text NOT NULL, product_category text,  stock_quantity integer,  p_price integer, CONSTRAINT products_pkey PRIMARY KEY (p_id));`;
+    const quers = `CREATE TABLE IF NOT EXISTS products (p_id SERIAL, product_name text COLLATE pg_catalog."default" NOT NULL, product_description text NOT NULL, product_category text,  stock_quantity integer, image_url text,  p_price integer,  CONSTRAINT products_pkey PRIMARY KEY (p_id));`;
     // console.log(DBConnect());
     const table = await DBConnect().query(quers);
     console.log("Table created successfully", table);
@@ -37,8 +37,9 @@ const insertRecord = async (data) => {
     console.error(error.message);
   }
 };
-const insertProduct = async (data) => {
+const insertProduct = async (data, originalname) => {
   try {
+    // console.log(">>>>>>>>>>>>>>>>>>>>>>>!!!!", originalname);
     const {
       product_name,
       product_description,
@@ -47,12 +48,13 @@ const insertProduct = async (data) => {
       p_price,
     } = data;
     const query_ =
-      "INSERT INTO products (product_name, product_description, product_category, stock_quantity, p_price) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+      "INSERT INTO products (product_name, product_description, product_category, stock_quantity, image_url, p_price) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
     const values = [
       product_name,
       product_description,
       product_category,
       stock_quantity,
+      originalname,
       p_price,
     ];
     const res = await DBConnect().query(query_, values);
