@@ -3,7 +3,7 @@ const client = require("../config/dbConnection");
 const jwt = require("jsonwebtoken");
 const env = require("dotenv");
 const { token } = require("morgan");
-const { viewSpecificRec } = require("../models/post");
+const { viewSpecificRec } = require("./app.model");
 
 const register = async (data, res) => {
   const { email, password, token } = data;

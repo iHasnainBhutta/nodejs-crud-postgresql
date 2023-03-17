@@ -1,6 +1,6 @@
 const express = require("express");
-const postController = require("../controller/post");
-const { upload } = require("../helperFunctions/fileUpload");
+const postController = require("../controller/app.controller");
+const { upload } = require("../services/fileUpload");
 const router = express.Router();
 
 router.post("/create-table", postController.createUsersTable);

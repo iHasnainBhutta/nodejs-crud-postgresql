@@ -13,13 +13,16 @@ const {
   insertProduct,
   viewProduct,
   deleteProduct,
-} = require("../models/post");
+} = require("../models/app.model");
 const { register, login } = require("../models/auth");
 const DBConnect = require("../config/dbConnection");
-const { sendEmail } = require("../helperFunctions/email");
-const { FileHandler } = require("../helperFunctions/fileUpload");
+const { sendEmail } = require("../services/email");
+const { FileHandler } = require("../services/fileUpload");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
+const fs = require("fs");
+const path = require("path");
 
 const createUsersTable = async (req, res) => {
   try {
@@ -111,11 +114,26 @@ const deleteRec = async (req, res) => {
 
 const deleteProductByID = async (req, res) => {
   try {
+    const { image_url } = req.body;
+    console.log(">>>>>>>>>", image_url);
     const id = req.params.id;
     const result = deleteProduct(id);
+    if (result) {
+      const imagePath = path.join(__dirname, "..", "public", image_url);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        console.log("Image deleted successfully");
+      });
+    }
     result
-      ? res.status(200).json({ message: "Record deleted" })
-      : res.status(500).json({ message: "Record not found" });
+      ? res.status(200).json({ message: "Product Deleted" })
+      : res
+          .status(500)
+          .json({ message: "Failed to delete: Invalid Product or ID" });
   } catch (error) {}
 };
 

@@ -168,6 +168,17 @@ const viewSpecificRec = async (id) => {
     console.error(err);
   }
 };
+const ViewProductById = async (id) => {
+  try {
+    const result = `SELECT * FROM products WHERE p_id = '${id}'`;
+    const query_ = await DBConnect().query(result);
+    const userData = query_.rows[0];
+    // console.log(">>>>>>>>>>>>>>>>", id_);
+    return userData;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const filterByEmail = async (email) => {
   try {
@@ -207,4 +218,5 @@ module.exports = {
   insertProduct,
   viewProduct,
   deleteProduct,
+  ViewProductById,
 };
