@@ -13,6 +13,7 @@ const {
   insertProduct,
   viewProduct,
   deleteProduct,
+  deleteMultiProducts,
 } = require("../models/app.model");
 const { register, login } = require("../models/auth");
 const DBConnect = require("../config/dbConnection");
@@ -144,6 +145,27 @@ const deleteMultiRows = async (req, res) => {
     result
       ? res.status(200).json({ message: "Selected Records deleted" })
       : res.status(500).json({ message: "Records not found" });
+  } catch (error) {
+    console.error(error);
+  }
+};
+const delMultiProducts = async (req, res) => {
+  try {
+    const ids = req.body;
+    console.log(">ids", ids);
+    const result = deleteMultiProducts(ids, res);
+    if (result) {
+      res.status(200).json({ message: "Selected Products has been deleted" });
+      console.log("if", result);
+    } else {
+      res.status(500).json({ message: "Products not found" });
+      console.log("else part");
+      // result.catch((err) => {
+      //   console.log(err)
+      //   res.status(500).json({ message: "Products not found" });
+      // });
+    }
+    // : res.status(500).json({ message: "Products not found" });
   } catch (error) {
     console.error(error);
   }
@@ -372,4 +394,5 @@ module.exports = {
   viewAllProduct,
   deleteProductByID,
   uploadFile,
+  delMultiProducts,
 };

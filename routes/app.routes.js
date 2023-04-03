@@ -16,6 +16,7 @@ router.get("/view-records", postController.viewAllRecords);
 router.get("/view-product", postController.viewAllProduct);
 router.delete("/delete-record/:id", postController.deleteRec);
 router.delete("/delete-product/:id", postController.deleteProductByID);
+router.delete("/delete-multi-products", postController.delMultiProducts);
 router.delete("/delete-multi-records", postController.deleteMultiRows);
 router.post("/insert-multi-records", postController.insertMultiRec);
 router.post("/user-register", postController.userRegister);

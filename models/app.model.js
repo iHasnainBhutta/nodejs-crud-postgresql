@@ -133,11 +133,25 @@ const deleteProduct = async (id) => {
 const deleteMultipleRows = async (ids) => {
   try {
     const { userIds } = ids;
+    console.log(userIds);
     const delQuery = `DELETE FROM customers WHERE user_id = ANY($1)`;
     const result = DBConnect().query(delQuery, [userIds]);
     result ? true : false;
   } catch (error) {
     console.error(error.message);
+  }
+};
+const deleteMultiProducts = async (ids, res) => {
+  try {
+    const { data } = ids;
+    console.log("..", data);
+    const delQuery = `DELETE FROM products WHERE p_id = ANY($1)`;
+    const result = await DBConnect().query(delQuery, [ids]);
+    return result.rowCount
+    console.log(">>", result)
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong!");
   }
 };
 
@@ -219,4 +233,5 @@ module.exports = {
   viewProduct,
   deleteProduct,
   ViewProductById,
+  deleteMultiProducts,
 };
